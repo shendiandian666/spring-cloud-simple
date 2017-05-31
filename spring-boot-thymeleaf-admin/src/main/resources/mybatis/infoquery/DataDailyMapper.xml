@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyx.mapper.infoquery.DataDailyMapper">
+
+	<!--表名 -->
+	<sql id="tableName">
+		"BON_DATA_DAILY_TBL"
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		POINTS_NO,
+		SHOP_CODE,
+		SHOP_CODE_OUT,
+		CHANNEL,
+		DIRECTION,
+		POINTS_ID,
+		TRANS_DATE,
+		USER_ID,
+		CUSTR_TYPE,
+		CUSTR_NBR,
+		BILL_AMT,
+		INP_DATE,
+		INP_TIME,
+		SERIALNO,
+		SEARCH,
+		MSG,
+		POINTS,
+		FILEID,
+		ORI_ID,
+		STATUS,
+		ID
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{POINTS_NO},
+		#{SHOP_CODE},
+		#{SHOP_CODE_OUT},
+		#{CHANNEL},
+		#{DIRECTION},
+		#{POINTS_ID},
+		#{TRANS_DATE},
+		#{USER_ID},
+		#{CUSTR_TYPE},
+		#{CUSTR_NBR},
+		#{BILL_AMT},
+		#{INP_DATE},
+		#{INP_TIME},
+		#{SERIALNO},
+		#{SEARCH},
+		#{MSG},
+		#{POINTS},
+		#{FILEID},
+		#{ORI_ID},
+		#{STATUS},
+		to_char(sysdate,'yyyyMMdd')||POINTS_DATA_SEQ.NEXTVAL		
+	</sql>
+	
+	<select id="list" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				POINTS_NO,
+				SHOP_CODE,
+				SHOP_CODE_OUT,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_DAILY_TBL'
+		                   and dic.table_column = 'SHOP_CODE_OUT')
+		           and bianma = SHOP_CODE_OUT) SHOP_CODE_OUT_DESC,
+				CHANNEL,
+				DIRECTION,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_DAILY_TBL'
+		                   and dic.table_column = 'DIRECTION')
+		           and bianma = DIRECTION) DIRECTION_DESC,
+				POINTS_ID,
+				TRANS_DATE,
+				USER_ID,
+				CUSTR_TYPE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_DAILY_TBL'
+		                   and dic.table_column = 'CUSTR_TYPE')
+		           and bianma = CUSTR_TYPE) CUSTR_TYPE_DESC,
+				CUSTR_NBR,
+				BILL_AMT,
+				INP_DATE,
+				INP_TIME,
+				SERIALNO,
+				SEARCH,
+				MSG,
+				POINTS,
+				FILEID,
+				ORI_ID,
+				STATUS,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_DAILY_TBL'
+		                   and dic.table_column = 'STATUS')
+		           and bianma = STATUS) STATUS_DESC,
+		ID
+		from 
+			<include refid="tableName"></include> a,(select * from jt_organ start with organ_id= #{user.organId} connect by prior organ_id = parent_id) b
+			where a.oper_org = b.organ_id
+		
+		
+	</select>
+	
+	<select id="isExists" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) from 
+		<include refid="tableName"></include> 
+		where ID = #{ID}
+	</select>
+	
+	<select id="listById" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				POINTS_NO,
+				SHOP_CODE,
+				SHOP_CODE_OUT,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_DAILY_TBL'
+		                   and dic.table_column = 'SHOP_CODE_OUT')
+		           and bianma = SHOP_CODE_OUT) SHOP_CODE_OUT_DESC,
+				CHANNEL,
+				DIRECTION,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_DAILY_TBL'
+		                   and dic.table_column = 'DIRECTION')
+		           and bianma = DIRECTION) DIRECTION_DESC,
+				POINTS_ID,
+				TRANS_DATE,
+				USER_ID,
+				CUSTR_TYPE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_DAILY_TBL'
+		                   and dic.table_column = 'CUSTR_TYPE')
+		           and bianma = CUSTR_TYPE) CUSTR_TYPE_DESC,
+				CUSTR_NBR,
+				BILL_AMT,
+				INP_DATE,
+				INP_TIME,
+				SERIALNO,
+				SEARCH,
+				MSG,
+				POINTS,
+				FILEID,
+				ORI_ID,
+				STATUS,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_DAILY_TBL'
+		                   and dic.table_column = 'STATUS')
+		           and bianma = STATUS) STATUS_DESC,
+		ID
+		from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</select>
+	
+	<insert id="save" parameterType="java.util.Map">
+		insert into 
+		<include refid="tableName"></include>
+		(
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update 
+		<include refid="tableName"></include>
+		set 
+		POINTS_NO = #{POINTS_NO},
+		SHOP_CODE = #{SHOP_CODE},
+		SHOP_CODE_OUT = #{SHOP_CODE_OUT},
+		CHANNEL = #{CHANNEL},
+		DIRECTION = #{DIRECTION},
+		POINTS_ID = #{POINTS_ID},
+		TRANS_DATE = #{TRANS_DATE},
+		USER_ID = #{USER_ID},
+		CUSTR_TYPE = #{CUSTR_TYPE},
+		CUSTR_NBR = #{CUSTR_NBR},
+		BILL_AMT = #{BILL_AMT},
+		INP_DATE = #{INP_DATE},
+		INP_TIME = #{INP_TIME},
+		SERIALNO = #{SERIALNO},
+		SEARCH = #{SEARCH},
+		MSG = #{MSG},
+		POINTS = #{POINTS},
+		FILEID = #{FILEID},
+		ORI_ID = #{ORI_ID},
+		STATUS = #{STATUS},
+		ID = ID
+		where ID = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		delete from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</delete>
+    
+</mapper>

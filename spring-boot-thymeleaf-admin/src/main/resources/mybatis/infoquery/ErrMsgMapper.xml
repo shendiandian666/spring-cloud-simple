@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyx.mapper.infoquery.ErrMsgMapper">
+
+	<!--表名 -->
+	<sql id="tableName">
+		"BON_ERR_MSG_TBL"
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		TRANS_DATE,
+		TRANS_TIME,
+		TRANS_CODE,
+		USER_ID,
+		PHONE,
+		CUSTR_TYPE,
+		CUSTR_NBR,
+		RESERVE,
+		ERRMSG,
+		ID
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{TRANS_DATE},
+		#{TRANS_TIME},
+		#{TRANS_CODE},
+		#{USER_ID},
+		#{PHONE},
+		#{CUSTR_TYPE},
+		#{CUSTR_NBR},
+		#{RESERVE},
+		#{ERRMSG},
+		to_char(sysdate,'yyyyMMdd')||POINTS_DATA_SEQ.NEXTVAL		
+	</sql>
+	
+	<select id="list" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				TRANS_DATE,
+				TRANS_TIME,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_ERR_MSG_TBL'
+		                   and dic.table_column = 'TRANS_TIME')
+		           and bianma = TRANS_TIME) TRANS_TIME_DESC,
+				TRANS_CODE,
+				USER_ID,
+				PHONE,
+				CUSTR_TYPE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_ERR_MSG_TBL'
+		                   and dic.table_column = 'CUSTR_TYPE')
+		           and bianma = CUSTR_TYPE) CUSTR_TYPE_DESC,
+				CUSTR_NBR,
+				RESERVE,
+				ERRMSG,
+		ID
+		from 
+			<include refid="tableName"></include>
+			where 1=1 
+		
+		
+	</select>
+	
+	<select id="isExists" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) from 
+		<include refid="tableName"></include> 
+		where ID = #{ID}
+	</select>
+	
+	<select id="listById" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				TRANS_DATE,
+				TRANS_TIME,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_ERR_MSG_TBL'
+		                   and dic.table_column = 'TRANS_TIME')
+		           and bianma = TRANS_TIME) TRANS_TIME_DESC,
+				TRANS_CODE,
+				USER_ID,
+				PHONE,
+				CUSTR_TYPE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_ERR_MSG_TBL'
+		                   and dic.table_column = 'CUSTR_TYPE')
+		           and bianma = CUSTR_TYPE) CUSTR_TYPE_DESC,
+				CUSTR_NBR,
+				RESERVE,
+				ERRMSG,
+		ID
+		from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</select>
+	
+	<insert id="save" parameterType="java.util.Map">
+		insert into 
+		<include refid="tableName"></include>
+		(
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update 
+		<include refid="tableName"></include>
+		set 
+		TRANS_DATE = #{TRANS_DATE},
+		TRANS_TIME = #{TRANS_TIME},
+		TRANS_CODE = #{TRANS_CODE},
+		USER_ID = #{USER_ID},
+		PHONE = #{PHONE},
+		CUSTR_TYPE = #{CUSTR_TYPE},
+		CUSTR_NBR = #{CUSTR_NBR},
+		RESERVE = #{RESERVE},
+		ERRMSG = #{ERRMSG},
+		ID = ID
+		where ID = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		delete from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</delete>
+    
+</mapper>

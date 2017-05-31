@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyx.mapper.infoquery.MerchantListMapper">
+
+	<!--表名 -->
+	<sql id="tableName">
+		"BON_MERCHANT_LIST_TBL"
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		SHOP_CODE,
+		TRANS_DATE,
+		TYPE,
+		ACCOUNT,
+		REDIT,
+		DEBIT,
+		AMT,
+		STATUS,
+		ID
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{SHOP_CODE},
+		#{TRANS_DATE},
+		#{TYPE},
+		#{ACCOUNT},
+		#{REDIT},
+		#{DEBIT},
+		#{AMT},
+		#{STATUS},
+		to_char(sysdate,'yyyyMMdd')||POINTS_DATA_SEQ.NEXTVAL		
+	</sql>
+	
+	<select id="list" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				SHOP_CODE,
+				TRANS_DATE,
+				TYPE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_MERCHANT_LIST_TBL'
+		                   and dic.table_column = 'TYPE')
+		           and bianma = TYPE) TYPE_DESC,
+				ACCOUNT,
+				REDIT,
+				DEBIT,
+				AMT,
+				STATUS,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_MERCHANT_LIST_TBL'
+		                   and dic.table_column = 'STATUS')
+		           and bianma = STATUS) STATUS_DESC,
+		ID
+		from 
+			<include refid="tableName"></include> a,(select * from jt_organ start with organ_id= #{user.organId} connect by prior organ_id = parent_id) b
+			where a.oper_org = b.organ_id
+		
+		
+	</select>
+	
+	<select id="isExists" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) from 
+		<include refid="tableName"></include> 
+		where ID = #{ID}
+	</select>
+	
+	<select id="listById" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				SHOP_CODE,
+				TRANS_DATE,
+				TYPE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_MERCHANT_LIST_TBL'
+		                   and dic.table_column = 'TYPE')
+		           and bianma = TYPE) TYPE_DESC,
+				ACCOUNT,
+				REDIT,
+				DEBIT,
+				AMT,
+				STATUS,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_MERCHANT_LIST_TBL'
+		                   and dic.table_column = 'STATUS')
+		           and bianma = STATUS) STATUS_DESC,
+		ID
+		from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</select>
+	
+	<insert id="save" parameterType="java.util.Map">
+		insert into 
+		<include refid="tableName"></include>
+		(
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update 
+		<include refid="tableName"></include>
+		set 
+		SHOP_CODE = #{SHOP_CODE},
+		TRANS_DATE = #{TRANS_DATE},
+		TYPE = #{TYPE},
+		ACCOUNT = #{ACCOUNT},
+		REDIT = #{REDIT},
+		DEBIT = #{DEBIT},
+		AMT = #{AMT},
+		STATUS = #{STATUS},
+		ID = ID
+		where ID = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		delete from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</delete>
+    
+</mapper>

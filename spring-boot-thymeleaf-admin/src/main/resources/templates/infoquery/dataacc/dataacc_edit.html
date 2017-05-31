@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head>
+<!-- 下拉框 -->
+<link rel="stylesheet" th:href="@{/ace/css/chosen.css}"/>
+<dif th:include="system/index/top::tophead"></dif>
+</head>
+<body class="no-skin">
+	<!-- /section:basics/navbar.layout -->
+	<div class="main-container" id="main-container">
+		<!-- /section:basics/sidebar -->
+		<div class="main-content">
+			<div class="main-content-inner">
+				<div class="page-content">
+					<div class="page-header">
+							<h1>
+								<small>
+									<i class="ace-icon fa fa-angle-double-right"></i>
+									编辑
+								</small>
+							</h1>
+					</div><!-- /.page-header -->
+					<div class="row">
+						<div class="col-xs-8 col-xs-offset-2">
+
+							<form th:action="@{'/infoquery/dataacc'+${action}}" name="Form" id="Form"
+								method="post">
+								<input type="hidden" name="ID" id="ID" th:value="${dataacc == null ? '' : dataacc.ID}" />
+								<div id="zhongxin" style="padding-top: 13px;">
+									<table id="table_report"
+										class="table table-striped table-bordered table-hover">
+										
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">积分账号:</td>
+											<td><input type="text" name="POINTS_NO" id="POINTS_NO"
+												th:value="${dataacc == null ? '' : dataacc.POINTS_NO}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">积分使用范围:</td>
+											<td>
+											<select
+												class="chosen-select form-control" name="POINTS_RANGE"
+												id="POINTS_RANGE" data-placeholder="积分使用范围"
+												style="vertical-align: top;">
+													<option value=""></option>
+													<option th:each="item,status : ${pointsrangeList}" th:selected="${item.BIANMA == (dataacc == null ? '' : dataacc.POINTS_RANGE)}" th:value="${item.BIANMA}" th:inline="text">[[${item.NAME}]]</option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">商城编码:</td>
+											<td><input type="text" name="SHOP_CODE" id="SHOP_CODE"
+												th:value="${dataacc == null ? '' : dataacc.SHOP_CODE}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">类型:</td>
+											<td>
+											<select
+												class="chosen-select form-control" name="TYPE"
+												id="TYPE" data-placeholder="类型"
+												style="vertical-align: top;">
+													<option value=""></option>
+													<option th:each="item,status : ${typeList}" th:selected="${item.BIANMA == (dataacc == null ? '' : dataacc.TYPE)}" th:value="${item.BIANMA}" th:inline="text">[[${item.NAME}]]</option>
+												</select>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">积分:</td>
+											<td><input type="text" name="POINTS" id="POINTS"
+												th:value="${dataacc == null ? '' : dataacc.POINTS}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">冻结积分:</td>
+											<td><input type="text" name="FREEZE_POINTS" id="FREEZE_POINTS"
+												th:value="${dataacc == null ? '' : dataacc.FREEZE_POINTS}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">可用积分:</td>
+											<td><input type="text" name="AVAILABLE_POINTS" id="AVAILABLE_POINTS"
+												th:value="${dataacc == null ? '' : dataacc.AVAILABLE_POINTS}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">积分账户状态:</td>
+											<td>
+											<select
+												class="chosen-select form-control" name="STATUS"
+												id="STATUS" data-placeholder="积分账户状态"
+												style="vertical-align: top;">
+													<option value=""></option>
+													<option th:each="item,status : ${statusList}" th:selected="${item.BIANMA == (dataacc == null ? '' : dataacc.STATUS)}" th:value="${item.BIANMA}" th:inline="text">[[${item.NAME}]]</option>
+												</select>
+											</td>
+										</tr>
+									</table>
+								</div>
+								<div id="zhongxin2" class="center" style="display: none">
+									<br />
+									<br />
+									<br />
+									<br />
+									<br />
+									<img th:src="@{/images/jiazai.gif}" /><br />
+									<h4 class="lighter block green">提交中...</h4>
+								</div>
+							</form>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.page-content -->
+			</div>
+		</div>
+		<!-- /.main-content -->
+	</div>
+	<!-- /.main-container -->
+
+	<footer>
+		<div style="width: 100%; padding-bottom: 2px;" class="center">
+			<a class="btn btn-mini btn-primary" onclick="save();">保存</a> <a
+				class="btn btn-mini btn-danger" onclick="cancel();">取消</a>
+		</div>
+	</footer>
+
+	<!-- 页面底部js¨ -->
+	<div th:include="system/index/foot::footdiv" />
+	<!-- 下拉框 -->
+	<script th:src="@{/ace/js/chosen.jquery.js}"></script>
+	<!--提示框-->
+	<script type="text/javascript" th:src="@{/js/jquery.tips.js}"></script>
+	<script type="text/javascript" th:inline="javascript">
+		$(top.hangge());
+		var action = [[${action}]];		
+		
+		function cancel(){
+			/*<![CDATA[*/
+			top.jzts();
+			if(true && document.forms[0]){
+				var url = /*[[${url}]]*/;
+				document.forms[0].action = url;
+				document.forms[0].submit();
+			}
+			/*]]>*/		
+		}
+		
+		//保存
+		function save() {
+			if ($("#POINTS_NO").val() == "") {
+				$("#POINTS_NO").tips({
+					side : 3,
+					msg : '请输入积分账号',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#POINTS_NO").focus();
+				return false;
+			}
+			if ($("#SHOP_CODE").val() == "") {
+				$("#SHOP_CODE").tips({
+					side : 3,
+					msg : '请输入商城编码',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#SHOP_CODE").focus();
+				return false;
+			}
+			if ($("#TYPE").val() == "") {
+				$("#TYPE").tips({
+					side : 3,
+					msg : '请输入类型',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#TYPE").focus();
+				return false;
+			}
+			if ($("#POINTS").val() == "") {
+				$("#POINTS").tips({
+					side : 3,
+					msg : '请输入积分',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#POINTS").focus();
+				return false;
+			}
+			if ($("#FREEZE_POINTS").val() == "") {
+				$("#FREEZE_POINTS").tips({
+					side : 3,
+					msg : '请输入冻结积分',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#FREEZE_POINTS").focus();
+				return false;
+			}
+			if ($("#AVAILABLE_POINTS").val() == "") {
+				$("#AVAILABLE_POINTS").tips({
+					side : 3,
+					msg : '请输入可用积分',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#AVAILABLE_POINTS").focus();
+				return false;
+			}
+			$.post(/*[[@{'/infoquery/dataacc'+${action}}]]*/,$("#Form").serializeJSON(),function(data){
+				if(data == 'SUCCESS'){
+					cancel();
+				}else{
+					alert(data);
+				}
+			});
+		}
+		$(function(){
+			//下拉框
+			if (!ace.vars['touch']) {
+				$('.chosen-select').chosen({
+					allow_single_deselect : true
+				});
+				$(window).off('resize.chosen').on('resize.chosen', function() {
+					$('.chosen-select').each(function() {
+						var $this = $(this);
+						$this.next().css({
+							'width' : $this.parent().width()
+						});
+					});
+				}).trigger('resize.chosen');
+				$(document).on('settings.ace.chosen',
+						function(e, event_name, event_val) {
+							if (event_name != 'sidebar_collapsed')
+								return;
+							$('.chosen-select').each(function() {
+								var $this = $(this);
+								$this.next().css({
+									'width' : $this.parent().width()
+								});
+							});
+						});
+				$('#chosen-multiple-style .btn').on(
+						'click',
+						function(e) {
+							var target = $(this).find('input[type=radio]');
+							var which = parseInt(target.val());
+							if (which == 2)
+								$('#form-field-select-4').addClass(
+										'tag-input-style');
+							else
+								$('#form-field-select-4').removeClass(
+										'tag-input-style');
+						});
+			}
+		});
+	</script>
+</body>
+</html>

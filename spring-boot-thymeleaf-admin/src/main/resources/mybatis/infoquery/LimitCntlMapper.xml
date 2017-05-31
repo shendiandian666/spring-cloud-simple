@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyx.mapper.infoquery.LimitCntlMapper">
+
+	<!--表名 -->
+	<sql id="tableName">
+		"BON_LIMIT_CNTL_TBL"
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		YWLX,
+		SHOP_CODE,
+		LIMIT_TYPE,
+		LIMIT_NAME,
+		LONGTIME_FLAG,
+		LIMIT_STDATE,
+		LIMIT_ENDATE,
+		LIMIT_LEVEL,
+		LIMIT_YMD_MODE,
+		POINTS_MAXNUM,
+		AMT_MAXNUM,
+		STATUS,
+		ID
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{YWLX},
+		#{SHOP_CODE},
+		#{LIMIT_TYPE},
+		#{LIMIT_NAME},
+		#{LONGTIME_FLAG},
+		#{LIMIT_STDATE},
+		#{LIMIT_ENDATE},
+		#{LIMIT_LEVEL},
+		#{LIMIT_YMD_MODE},
+		#{POINTS_MAXNUM},
+		#{AMT_MAXNUM},
+		#{STATUS},
+		to_char(sysdate,'yyyyMMdd')||POINTS_DATA_SEQ.NEXTVAL		
+	</sql>
+	
+	<select id="list" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				YWLX,
+				SHOP_CODE,
+				LIMIT_TYPE,
+				LIMIT_NAME,
+				LONGTIME_FLAG,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_LIMIT_CNTL_TBL'
+		                   and dic.table_column = 'LONGTIME_FLAG')
+		           and bianma = LONGTIME_FLAG) LONGTIME_FLAG_DESC,
+				LIMIT_STDATE,
+				LIMIT_ENDATE,
+				LIMIT_LEVEL,
+				LIMIT_YMD_MODE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_LIMIT_CNTL_TBL'
+		                   and dic.table_column = 'LIMIT_YMD_MODE')
+		           and bianma = LIMIT_YMD_MODE) LIMIT_YMD_MODE_DESC,
+				POINTS_MAXNUM,
+				AMT_MAXNUM,
+				STATUS,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_LIMIT_CNTL_TBL'
+		                   and dic.table_column = 'STATUS')
+		           and bianma = STATUS) STATUS_DESC,
+		ID
+		from 
+			<include refid="tableName"></include> a,(select * from jt_organ start with organ_id= #{user.organId} connect by prior organ_id = parent_id) b
+			where a.oper_org = b.organ_id
+		
+		
+	</select>
+	
+	<select id="isExists" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) from 
+		<include refid="tableName"></include> 
+		where ID = #{ID}
+	</select>
+	
+	<select id="listById" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				YWLX,
+				SHOP_CODE,
+				LIMIT_TYPE,
+				LIMIT_NAME,
+				LONGTIME_FLAG,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_LIMIT_CNTL_TBL'
+		                   and dic.table_column = 'LONGTIME_FLAG')
+		           and bianma = LONGTIME_FLAG) LONGTIME_FLAG_DESC,
+				LIMIT_STDATE,
+				LIMIT_ENDATE,
+				LIMIT_LEVEL,
+				LIMIT_YMD_MODE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_LIMIT_CNTL_TBL'
+		                   and dic.table_column = 'LIMIT_YMD_MODE')
+		           and bianma = LIMIT_YMD_MODE) LIMIT_YMD_MODE_DESC,
+				POINTS_MAXNUM,
+				AMT_MAXNUM,
+				STATUS,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_LIMIT_CNTL_TBL'
+		                   and dic.table_column = 'STATUS')
+		           and bianma = STATUS) STATUS_DESC,
+		ID
+		from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</select>
+	
+	<insert id="save" parameterType="java.util.Map">
+		insert into 
+		<include refid="tableName"></include>
+		(
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update 
+		<include refid="tableName"></include>
+		set 
+		YWLX = #{YWLX},
+		SHOP_CODE = #{SHOP_CODE},
+		LIMIT_TYPE = #{LIMIT_TYPE},
+		LIMIT_NAME = #{LIMIT_NAME},
+		LONGTIME_FLAG = #{LONGTIME_FLAG},
+		LIMIT_STDATE = #{LIMIT_STDATE},
+		LIMIT_ENDATE = #{LIMIT_ENDATE},
+		LIMIT_LEVEL = #{LIMIT_LEVEL},
+		LIMIT_YMD_MODE = #{LIMIT_YMD_MODE},
+		POINTS_MAXNUM = #{POINTS_MAXNUM},
+		AMT_MAXNUM = #{AMT_MAXNUM},
+		STATUS = #{STATUS},
+		ID = ID
+		where ID = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		delete from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</delete>
+    
+</mapper>

@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyx.mapper.rule.BasicPointsMapper">
+
+	<!--表名 -->
+	<sql id="tableName">
+		"BON_BASIC_POINTS_TBL"
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		SHOP_CODE,
+		POINTS_CODE,
+		TYPE,
+		OWNER,
+		POINTS_NAME,
+		POINTS_TYPE,
+		POINTS_RANGE,
+		DATA_FLAG,
+		RUN_FLAG,
+		LONGTIME_FLAG,
+		POINTS_STDATE,
+		POINTS_ENDATE,
+		LIMIT_TYPE,
+		MAX_POINTS,
+		STATUS,
+		OPER_ORG,
+		OPER_ID,
+		OPER_DATE,
+		ID
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{user.organId},
+		#{POINTS_CODE,jdbcType=VARCHAR},
+		#{TYPE,jdbcType=VARCHAR},
+		#{OWNER,jdbcType=VARCHAR},
+		#{POINTS_NAME,jdbcType=VARCHAR},
+		#{POINTS_TYPE,jdbcType=VARCHAR},
+		#{POINTS_RANGE,jdbcType=VARCHAR},
+		#{DATA_FLAG,jdbcType=VARCHAR},
+		#{RUN_FLAG,jdbcType=VARCHAR},
+		#{LONGTIME_FLAG,jdbcType=VARCHAR},
+		#{POINTS_STDATE,jdbcType=VARCHAR},
+		#{POINTS_ENDATE,jdbcType=VARCHAR},
+		#{LIMIT_TYPE,jdbcType=VARCHAR},
+		#{MAX_POINTS},
+		#{STATUS},
+		#{user.organId},
+		#{user.userName},
+		sysdate,
+		to_char(sysdate,'yyyyMMdd')||POINTS_BASIC_SEQ.NEXTVAL		
+	</sql>
+	
+	<select id="listItems" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from bon_basic_item_tbl 
+	</select>
+	
+	<select id="list" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				SHOP_CODE,
+				POINTS_CODE,
+				TYPE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'TYPE')
+		           and bianma = TYPE) TYPE_DESC,
+				OWNER,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'OWNER')
+		           and bianma = OWNER) OWNER_DESC,
+				POINTS_NAME,
+				POINTS_TYPE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'POINTS_TYPE')
+		           and bianma = POINTS_TYPE) POINTS_TYPE_DESC,
+				POINTS_RANGE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'POINTS_RANGE')
+		           and bianma = POINTS_RANGE) POINTS_RANGE_DESC,
+				DATA_FLAG,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'DATA_FLAG')
+		           and bianma = DATA_FLAG) DATA_FLAG_DESC,
+				RUN_FLAG,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'RUN_FLAG')
+		           and bianma = RUN_FLAG) RUN_FLAG_DESC,
+				LONGTIME_FLAG,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'LONGTIME_FLAG')
+		           and bianma = LONGTIME_FLAG) LONGTIME_FLAG_DESC,
+				POINTS_STDATE,
+				POINTS_ENDATE,
+				LIMIT_TYPE,
+				(select LIMIT_NAME
+		          from BON_LIMIT_CNTL_TBL
+		         where LIMIT_TYPE = LIMIT_TYPE) LIMIT_TYPE_DESC,
+				MAX_POINTS,
+				STATUS,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'STATUS')
+		           and bianma = STATUS) STATUS_DESC,
+		ID
+		from 
+		<include refid="tableName"></include> a,(select * from jt_organ start with organ_id= #{user.organId} connect by prior organ_id = parent_id) b
+	 where a.OPER_ORG = b.organ_id
+	 	<if test="keywords!= null and keywords != ''">
+			and
+				(
+					 a.SHOP_CODE LIKE CONCAT(CONCAT('%', #{keywords}),'%')
+					 or 
+					 a.POINTS_CODE LIKE CONCAT(CONCAT('%', #{keywords}),'%') 
+					 or 
+					 a.POINTS_NAME LIKE CONCAT(CONCAT('%', #{keywords}),'%') 
+				)
+		</if>
+		order by SHOP_CODE
+	</select>
+	
+	<select id="isExists" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) from 
+		<include refid="tableName"></include> 
+		where POINTS_CODE = #{POINTS_CODE}
+	</select>
+	
+	<select id="listById" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				SHOP_CODE,
+				POINTS_CODE,
+				TYPE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'TYPE')
+		           and bianma = TYPE) TYPE_DESC,
+				OWNER,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'OWNER')
+		           and bianma = OWNER) OWNER_DESC,
+				POINTS_NAME,
+				POINTS_TYPE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'POINTS_TYPE')
+		           and bianma = POINTS_TYPE) POINTS_TYPE_DESC,
+				POINTS_RANGE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'POINTS_RANGE')
+		           and bianma = POINTS_RANGE) POINTS_RANGE_DESC,
+				DATA_FLAG,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'DATA_FLAG')
+		           and bianma = DATA_FLAG) DATA_FLAG_DESC,
+				RUN_FLAG,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'RUN_FLAG')
+		           and bianma = RUN_FLAG) RUN_FLAG_DESC,
+				LONGTIME_FLAG,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'LONGTIME_FLAG')
+		           and bianma = LONGTIME_FLAG) LONGTIME_FLAG_DESC,
+				POINTS_STDATE,
+				POINTS_ENDATE,
+				LIMIT_TYPE,
+				(select LIMIT_NAME
+		          from BON_LIMIT_CNTL_TBL
+		         where LIMIT_TYPE = LIMIT_TYPE) LIMIT_TYPE_DESC,
+				MAX_POINTS,
+				STATUS,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                   and dic.table_column = 'STATUS')
+		           and bianma = STATUS) STATUS_DESC,
+		ID
+		from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</select>
+	
+	<insert id="save" parameterType="java.util.Map">
+		insert into 
+		<include refid="tableName"></include>
+		(
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update 
+		<include refid="tableName"></include>
+		set 
+		SHOP_CODE = #{SHOP_CODE},
+		POINTS_CODE = #{POINTS_CODE},
+		TYPE = #{TYPE},
+		OWNER = #{OWNER},
+		POINTS_NAME = #{POINTS_NAME},
+		POINTS_TYPE = #{POINTS_TYPE},
+		POINTS_RANGE = #{POINTS_RANGE},
+		DATA_FLAG = #{DATA_FLAG},
+		RUN_FLAG = #{RUN_FLAG},
+		LONGTIME_FLAG = #{LONGTIME_FLAG},
+		POINTS_STDATE = #{POINTS_STDATE},
+		POINTS_ENDATE = #{POINTS_ENDATE},
+		LIMIT_TYPE = #{LIMIT_TYPE},
+		MAX_POINTS = #{MAX_POINTS},
+		STATUS = #{STATUS},
+		ID = ID
+		where ID = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		delete from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</delete>
+	
+	<select id="findByPointsCode" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+		*
+		from 
+		BON_BASIC_RULE_TBL
+		where 
+			"POINTS_CODE" = #{POINTS_CODE}
+			order by RULE_NUM
+	</select>
+    
+    <!-- 通过ID获取数据 -->
+	<select id="findByRuleCode" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+		*
+		from 
+		bon_basic_ruleitem_tbl a,bon_basic_item_tbl b
+		where a.RULEITEM_CODE=b.RULEITEM_CODE and
+			replace("RULE_CODE",' ','') = replace(#{RULE_CODE},' ','')
+			order by a.RULEITEM_NUM
+	</select>
+	
+	<insert id="saveBasicRule" parameterType="java.util.Map">
+		insert into
+		BON_BASIC_RULE_TBL
+		(
+			"RULE_CODE",	
+			"SHOP_CODE",	
+			"POINTS_CODE",	
+			"RULE_NUM",	
+			"RULE_NAME",	
+			"RULE_TYPE",	
+			"RULE_FORMULA",	
+			"FORMULA_TYPE",	
+			"STATUS",	
+			"OPER_ORG",
+			"OPER_ID",
+			"OPER_DATE",
+			"ID"
+		) values (
+			#{RULE_CODE,jdbcType=VARCHAR},	
+			#{SHOP_CODE,jdbcType=VARCHAR},	
+			#{POINTS_CODE,jdbcType=VARCHAR},	
+			#{RULE_NUM},	
+			#{RULE_NAME,jdbcType=VARCHAR},	
+			#{RULE_TYPE,jdbcType=VARCHAR},	
+			#{RULE_FORMULA,jdbcType=VARCHAR},	
+			#{FORMULA_TYPE,jdbcType=VARCHAR},	
+			#{STATUS,jdbcType=VARCHAR},	
+			#{user.organId},
+			#{user.userName},
+			sysdate,
+			to_char(sysdate,'yyyyMMdd')||POINTS_BASIC_SEQ.NEXTVAL
+		)
+	</insert>
+	
+	<insert id="saveRuleItem" parameterType="java.util.Map">
+		insert into
+		BON_BASIC_RULEITEM_TBL
+		(
+		"SHOP_CODE",	
+		"RULE_CODE",	
+		"RULEITEM_CODE",	
+		"RULEITEM_NUM",	
+		"RULEITEM_TYPE",	
+		"RULEITEM_FUN",	
+		"RULEITEM_VAL",	
+		"RULEITEM_SELECT",
+		"RULEITEM_TEXT",
+		"ID"
+		) values (
+			#{SHOP_CODE,jdbcType=VARCHAR},	
+			#{RULE_CODE,jdbcType=VARCHAR},	
+			#{RULEITEM_CODE,jdbcType=VARCHAR},	
+			#{RULEITEM_NUM},	
+			#{RULEITEM_TYPE,jdbcType=VARCHAR},	
+			#{RULEITEM_FUN,jdbcType=VARCHAR},	
+			#{RULEITEM_VAL,jdbcType=VARCHAR},	
+			#{RULEITEM_SELECT,jdbcType=VARCHAR},
+			#{RULEITEM_TEXT,jdbcType=VARCHAR},
+			to_char(sysdate,'yyyyMMdd')||POINTS_BASIC_SEQ.NEXTVAL
+		)
+	</insert>
+	
+	<delete id="delRuleItem" parameterType="java.util.Map">
+		delete from bon_basic_ruleitem_tbl a
+		 where exists
+		 (select 1
+		          from bon_basic_rule_tbl b
+		         where replace(a.rule_code, ' ', '') = replace(b.rule_code, ' ', '')
+		           and b.points_code = #{POINTS_CODE})
+	</delete>
+	
+	<delete id="delRule" parameterType="java.util.Map">
+		delete from bon_basic_rule_tbl where points_code = #{POINTS_CODE}
+	</delete>
+	
+	<delete id="delStart" parameterType="java.util.Map">
+		delete from
+		bon_basic_start_tbl
+		where 
+			"POINTS_ID" = #{POINTS_CODE}
+	</delete>
+	<!-- 查询限额类型 -->
+	<select id="findLimitType" resultType="java.util.Map">
+		select LIMIT_TYPE BIANMA,LIMIT_NAME NAME from BON_LIMIT_CNTL_TBL
+	</select>
+	
+</mapper>

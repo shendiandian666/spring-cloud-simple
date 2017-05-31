@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyx.mapper.infoquery.BasicDataMapper">
+
+	<!--表名 -->
+	<sql id="tableName">
+		"BON_BASIC_DATA_TBL"
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		RULE_CODE,
+		RULEITEM_CODE,
+		DATA_VAL,
+		ID
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{RULE_CODE},
+		#{RULEITEM_CODE},
+		#{DATA_VAL},
+		to_char(sysdate,'yyyyMMdd')||POINTS_BASIC_SEQ.NEXTVAL		
+	</sql>
+	
+	<select id="list" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				RULE_CODE,
+				RULEITEM_CODE,
+				DATA_VAL,
+		ID
+		from 
+			<include refid="tableName"></include>
+			where 1=1 
+		
+		
+	</select>
+	
+	<select id="isExists" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) from 
+		<include refid="tableName"></include> 
+		where ID = #{ID}
+	</select>
+	
+	<select id="listById" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				RULE_CODE,
+				RULEITEM_CODE,
+				DATA_VAL,
+		ID
+		from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</select>
+	
+	<insert id="save" parameterType="java.util.Map">
+		insert into 
+		<include refid="tableName"></include>
+		(
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update 
+		<include refid="tableName"></include>
+		set 
+		RULE_CODE = #{RULE_CODE},
+		RULEITEM_CODE = #{RULEITEM_CODE},
+		DATA_VAL = #{DATA_VAL},
+		ID = ID
+		where ID = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		delete from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</delete>
+    
+</mapper>

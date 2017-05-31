@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyx.mapper.infoquery.SysTaskMapper">
+
+	<!--表名 -->
+	<sql id="tableName">
+		"BON_SYS_TASK_TBL"
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		TRANS_CODE,
+		TRANS_NAME,
+		TRANS_DATE,
+		YWLX,
+		ORGCODE,
+		STIME,
+		ETIME,
+		STATUS,
+		XYXX,
+		TOTAL,
+		FUFILNUM,
+		ID
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{TRANS_CODE},
+		#{TRANS_NAME},
+		#{TRANS_DATE},
+		#{YWLX},
+		#{ORGCODE},
+		#{STIME},
+		#{ETIME},
+		#{STATUS},
+		#{XYXX},
+		#{TOTAL},
+		#{FUFILNUM},
+		to_char(sysdate,'yyyyMMdd')||POINTS_SYS_SEQ.NEXTVAL		
+	</sql>
+	
+	<select id="list" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				TRANS_CODE,
+				TRANS_NAME,
+				TRANS_DATE,
+				YWLX,
+				ORGCODE,
+				STIME,
+				ETIME,
+				STATUS,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_SYS_TASK_TBL'
+		                   and dic.table_column = 'STATUS')
+		           and bianma = STATUS) STATUS_DESC,
+				XYXX,
+				TOTAL,
+				FUFILNUM,
+				FUFILNUM/TOTAL*100 PROCESS,
+		ID
+		from 
+			<include refid="tableName"></include>
+			where 1=1 
+		
+		
+	</select>
+	
+	<select id="isExists" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) from 
+		<include refid="tableName"></include> 
+		where ID = #{ID}
+	</select>
+	
+	<select id="listById" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				TRANS_CODE,
+				TRANS_NAME,
+				TRANS_DATE,
+				YWLX,
+				ORGCODE,
+				STIME,
+				ETIME,
+				STATUS,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_SYS_TASK_TBL'
+		                   and dic.table_column = 'STATUS')
+		           and bianma = STATUS) STATUS_DESC,
+				XYXX,
+				TOTAL,
+				FUFILNUM,
+		ID
+		from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</select>
+	
+	<insert id="save" parameterType="java.util.Map">
+		insert into 
+		<include refid="tableName"></include>
+		(
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update 
+		<include refid="tableName"></include>
+		set 
+		TRANS_CODE = #{TRANS_CODE},
+		TRANS_NAME = #{TRANS_NAME},
+		TRANS_DATE = #{TRANS_DATE},
+		YWLX = #{YWLX},
+		ORGCODE = #{ORGCODE},
+		STIME = #{STIME},
+		ETIME = #{ETIME},
+		STATUS = #{STATUS},
+		XYXX = #{XYXX},
+		TOTAL = #{TOTAL},
+		FUFILNUM = #{FUFILNUM},
+		ID = ID
+		where ID = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		delete from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</delete>
+    
+</mapper>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyx.mapper.infoquery.LimitChgMapper">
+
+	<!--表名 -->
+	<sql id="tableName">
+		"BON_LIMIT_CHG_TBL"
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		ZWRQ,
+		TYPE_CODE,
+		SHOP_CODE,
+		LIMIT_TYPE,
+		LIMIT_YMD,
+		LIMIT_LEVEL_VAL,
+		OTH_NBR,
+		LIMIT_VAL,
+		ID
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{ZWRQ},
+		#{TYPE_CODE},
+		#{SHOP_CODE},
+		#{LIMIT_TYPE},
+		#{LIMIT_YMD},
+		#{LIMIT_LEVEL_VAL},
+		#{OTH_NBR},
+		#{LIMIT_VAL},
+		to_char(sysdate,'yyyyMMdd')||POINTS_DATA_SEQ.NEXTVAL		
+	</sql>
+	
+	<select id="list" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				ZWRQ,
+				TYPE_CODE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_LIMIT_CHG_TBL'
+		                   and dic.table_column = 'TYPE_CODE')
+		           and bianma = TYPE_CODE) TYPE_CODE_DESC,
+				SHOP_CODE,
+				LIMIT_TYPE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_LIMIT_CHG_TBL'
+		                   and dic.table_column = 'LIMIT_TYPE')
+		           and bianma = LIMIT_TYPE) LIMIT_TYPE_DESC,
+				LIMIT_YMD,
+				LIMIT_LEVEL_VAL,
+				OTH_NBR,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_LIMIT_CHG_TBL'
+		                   and dic.table_column = 'OTH_NBR')
+		           and bianma = OTH_NBR) OTH_NBR_DESC,
+				LIMIT_VAL,
+		ID
+		from 
+			<include refid="tableName"></include>
+			where 1=1 
+		
+		
+	</select>
+	
+	<select id="isExists" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) from 
+		<include refid="tableName"></include> 
+		where ID = #{ID}
+	</select>
+	
+	<select id="listById" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				ZWRQ,
+				TYPE_CODE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_LIMIT_CHG_TBL'
+		                   and dic.table_column = 'TYPE_CODE')
+		           and bianma = TYPE_CODE) TYPE_CODE_DESC,
+				SHOP_CODE,
+				LIMIT_TYPE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_LIMIT_CHG_TBL'
+		                   and dic.table_column = 'LIMIT_TYPE')
+		           and bianma = LIMIT_TYPE) LIMIT_TYPE_DESC,
+				LIMIT_YMD,
+				LIMIT_LEVEL_VAL,
+				OTH_NBR,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_LIMIT_CHG_TBL'
+		                   and dic.table_column = 'OTH_NBR')
+		           and bianma = OTH_NBR) OTH_NBR_DESC,
+				LIMIT_VAL,
+		ID
+		from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</select>
+	
+	<insert id="save" parameterType="java.util.Map">
+		insert into 
+		<include refid="tableName"></include>
+		(
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update 
+		<include refid="tableName"></include>
+		set 
+		ZWRQ = #{ZWRQ},
+		TYPE_CODE = #{TYPE_CODE},
+		SHOP_CODE = #{SHOP_CODE},
+		LIMIT_TYPE = #{LIMIT_TYPE},
+		LIMIT_YMD = #{LIMIT_YMD},
+		LIMIT_LEVEL_VAL = #{LIMIT_LEVEL_VAL},
+		OTH_NBR = #{OTH_NBR},
+		LIMIT_VAL = #{LIMIT_VAL},
+		ID = ID
+		where ID = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		delete from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</delete>
+    
+</mapper>

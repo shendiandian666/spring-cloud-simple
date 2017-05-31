@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head>
+<!-- 下拉框 -->
+<link rel="stylesheet" th:href="@{/ace/css/chosen.css}"/>
+<dif th:include="system/index/top::tophead"></dif>
+</head>
+<body class="no-skin">
+	<!-- /section:basics/navbar.layout -->
+	<div class="main-container" id="main-container">
+		<!-- /section:basics/sidebar -->
+		<div class="main-content">
+			<div class="main-content-inner">
+				<div class="page-content">
+					<div class="page-header">
+							<h1>
+								<small>
+									<i class="ace-icon fa fa-angle-double-right"></i>
+									编辑
+								</small>
+							</h1>
+					</div><!-- /.page-header -->
+					<div class="row">
+						<div class="col-xs-8 col-xs-offset-2">
+
+							<form th:action="@{'/infoquery/systask'+${action}}" name="Form" id="Form"
+								method="post">
+								<input type="hidden" name="ID" id="ID" th:value="${systask == null ? '' : systask.ID}" />
+								<div id="zhongxin" style="padding-top: 13px;">
+									<table id="table_report"
+										class="table table-striped table-bordered table-hover">
+										
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">批处理任务名称:</td>
+											<td><input type="text" name="TRANS_CODE" id="TRANS_CODE"
+												th:value="${systask == null ? '' : systask.TRANS_CODE}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">批处理任务描述:</td>
+											<td><input type="text" name="TRANS_NAME" id="TRANS_NAME"
+												th:value="${systask == null ? '' : systask.TRANS_NAME}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">交易日期:</td>
+											<td><input type="text" name="TRANS_DATE" id="TRANS_DATE"
+												th:value="${systask == null ? '' : systask.TRANS_DATE}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">业务类型:</td>
+											<td><input type="text" name="YWLX" id="YWLX"
+												th:value="${systask == null ? '' : systask.YWLX}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">机构编码:</td>
+											<td><input type="text" name="ORGCODE" id="ORGCODE"
+												th:value="${systask == null ? '' : systask.ORGCODE}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">开始时间:</td>
+											<td><input type="text" name="STIME" id="STIME"
+												th:value="${systask == null ? '' : systask.STIME}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">结束时间:</td>
+											<td><input type="text" name="ETIME" id="ETIME"
+												th:value="${systask == null ? '' : systask.ETIME}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">状态:</td>
+											<td>
+											<select
+												class="chosen-select form-control" name="STATUS"
+												id="STATUS" data-placeholder="状态"
+												style="vertical-align: top;">
+													<option value=""></option>
+													<option th:each="item,status : ${statusList}" th:selected="${item.BIANMA == (systask == null ? '' : systask.STATUS)}" th:value="${item.BIANMA}" th:inline="text">[[${item.NAME}]]</option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">响应信息:</td>
+											<td><input type="text" name="XYXX" id="XYXX"
+												th:value="${systask == null ? '' : systask.XYXX}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">处理总数:</td>
+											<td><input type="text" name="TOTAL" id="TOTAL"
+												th:value="${systask == null ? '' : systask.TOTAL}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">已完成数目:</td>
+											<td><input type="text" name="FUFILNUM" id="FUFILNUM"
+												th:value="${systask == null ? '' : systask.FUFILNUM}" style="width: 98%;" /></td>
+										</tr>
+									</table>
+								</div>
+								<div id="zhongxin2" class="center" style="display: none">
+									<br />
+									<br />
+									<br />
+									<br />
+									<br />
+									<img th:src="@{/images/jiazai.gif}" /><br />
+									<h4 class="lighter block green">提交中...</h4>
+								</div>
+							</form>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.page-content -->
+			</div>
+		</div>
+		<!-- /.main-content -->
+	</div>
+	<!-- /.main-container -->
+
+	<footer>
+		<div style="width: 100%; padding-bottom: 2px;" class="center">
+			<a class="btn btn-mini btn-primary" onclick="save();">保存</a> <a
+				class="btn btn-mini btn-danger" onclick="cancel();">取消</a>
+		</div>
+	</footer>
+
+	<!-- 页面底部js¨ -->
+	<div th:include="system/index/foot::footdiv" />
+	<!-- 下拉框 -->
+	<script th:src="@{/ace/js/chosen.jquery.js}"></script>
+	<!--提示框-->
+	<script type="text/javascript" th:src="@{/js/jquery.tips.js}"></script>
+	<script type="text/javascript" th:inline="javascript">
+		$(top.hangge());
+		var action = [[${action}]];		
+		
+		function cancel(){
+			/*<![CDATA[*/
+			top.jzts();
+			if(true && document.forms[0]){
+				var url = /*[[${url}]]*/;
+				document.forms[0].action = url;
+				document.forms[0].submit();
+			}
+			/*]]>*/		
+		}
+		
+		//保存
+		function save() {
+			if ($("#TRANS_CODE").val() == "") {
+				$("#TRANS_CODE").tips({
+					side : 3,
+					msg : '请输入批处理任务名称',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#TRANS_CODE").focus();
+				return false;
+			}
+			if ($("#TRANS_NAME").val() == "") {
+				$("#TRANS_NAME").tips({
+					side : 3,
+					msg : '请输入批处理任务描述',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#TRANS_NAME").focus();
+				return false;
+			}
+			if ($("#TRANS_DATE").val() == "") {
+				$("#TRANS_DATE").tips({
+					side : 3,
+					msg : '请输入交易日期',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#TRANS_DATE").focus();
+				return false;
+			}
+			if ($("#YWLX").val() == "") {
+				$("#YWLX").tips({
+					side : 3,
+					msg : '请输入业务类型',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#YWLX").focus();
+				return false;
+			}
+			if ($("#ORGCODE").val() == "") {
+				$("#ORGCODE").tips({
+					side : 3,
+					msg : '请输入机构编码',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#ORGCODE").focus();
+				return false;
+			}
+			if ($("#STIME").val() == "") {
+				$("#STIME").tips({
+					side : 3,
+					msg : '请输入开始时间',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#STIME").focus();
+				return false;
+			}
+			if ($("#ETIME").val() == "") {
+				$("#ETIME").tips({
+					side : 3,
+					msg : '请输入结束时间',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#ETIME").focus();
+				return false;
+			}
+			if ($("#XYXX").val() == "") {
+				$("#XYXX").tips({
+					side : 3,
+					msg : '请输入响应信息',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#XYXX").focus();
+				return false;
+			}
+			if ($("#TOTAL").val() == "") {
+				$("#TOTAL").tips({
+					side : 3,
+					msg : '请输入处理总数',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#TOTAL").focus();
+				return false;
+			}
+			if ($("#FUFILNUM").val() == "") {
+				$("#FUFILNUM").tips({
+					side : 3,
+					msg : '请输入已完成数目',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#FUFILNUM").focus();
+				return false;
+			}
+			$.post(/*[[@{'/infoquery/systask'+${action}}]]*/,$("#Form").serializeJSON(),function(data){
+				if(data == 'SUCCESS'){
+					cancel();
+				}else{
+					alert(data);
+				}
+			});
+		}
+		$(function(){
+			//下拉框
+			if (!ace.vars['touch']) {
+				$('.chosen-select').chosen({
+					allow_single_deselect : true
+				});
+				$(window).off('resize.chosen').on('resize.chosen', function() {
+					$('.chosen-select').each(function() {
+						var $this = $(this);
+						$this.next().css({
+							'width' : $this.parent().width()
+						});
+					});
+				}).trigger('resize.chosen');
+				$(document).on('settings.ace.chosen',
+						function(e, event_name, event_val) {
+							if (event_name != 'sidebar_collapsed')
+								return;
+							$('.chosen-select').each(function() {
+								var $this = $(this);
+								$this.next().css({
+									'width' : $this.parent().width()
+								});
+							});
+						});
+				$('#chosen-multiple-style .btn').on(
+						'click',
+						function(e) {
+							var target = $(this).find('input[type=radio]');
+							var which = parseInt(target.val());
+							if (which == 2)
+								$('#form-field-select-4').addClass(
+										'tag-input-style');
+							else
+								$('#form-field-select-4').removeClass(
+										'tag-input-style');
+						});
+			}
+		});
+	</script>
+</body>
+</html>

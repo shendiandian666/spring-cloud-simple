@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyx.mapper.infoquery.DataExchangeMapper">
+
+	<!--表名 -->
+	<sql id="tableName">
+		"BON_DATA_EXCHANGE_TBL"
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		TRANS_DATE,
+		YWLX,
+		POINTS_NO,
+		POINTS_TYPE,
+		SHOP_CODE,
+		POINTS_NUM,
+		WWLSH,
+		BATCH_ID,
+		ORGCODE,
+		CARD_NBR,
+		SURNAME,
+		LAST_NM,
+		FIRST_NM,
+		USER_ID,
+		CUSTR_TYPE,
+		CUSTR_NBR,
+		POINTS_SIGN,
+		POINTS,
+		EXCHANGE_PRE,
+		EXCHANGE_COM,
+		EXCHANGE,
+		LAST_DATE,
+		STATUS,
+		MOBILE,
+		INPUT_MTH,
+		GYH,
+		YWQD,
+		MISC_TX,
+		XYM,
+		XYXX,
+		ID
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{TRANS_DATE},
+		#{YWLX},
+		#{POINTS_NO},
+		#{POINTS_TYPE},
+		#{SHOP_CODE},
+		#{POINTS_NUM},
+		#{WWLSH},
+		#{BATCH_ID},
+		#{ORGCODE},
+		#{CARD_NBR},
+		#{SURNAME},
+		#{LAST_NM},
+		#{FIRST_NM},
+		#{USER_ID},
+		#{CUSTR_TYPE},
+		#{CUSTR_NBR},
+		#{POINTS_SIGN},
+		#{POINTS},
+		#{EXCHANGE_PRE},
+		#{EXCHANGE_COM},
+		#{EXCHANGE},
+		#{LAST_DATE},
+		#{STATUS},
+		#{MOBILE},
+		#{INPUT_MTH},
+		#{GYH},
+		#{YWQD},
+		#{MISC_TX},
+		#{XYM},
+		#{XYXX},
+		to_char(sysdate,'yyyyMMdd')||POINTS_DATA_SEQ.NEXTVAL		
+	</sql>
+	
+	<select id="list" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				TRANS_DATE,
+				YWLX,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_EXCHANGE_TBL'
+		                   and dic.table_column = 'YWLX')
+		           and bianma = YWLX) YWLX_DESC,
+				POINTS_NO,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_EXCHANGE_TBL'
+		                   and dic.table_column = 'POINTS_NO')
+		           and bianma = POINTS_NO) POINTS_NO_DESC,
+				POINTS_TYPE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_EXCHANGE_TBL'
+		                   and dic.table_column = 'POINTS_TYPE')
+		           and bianma = POINTS_TYPE) POINTS_TYPE_DESC,
+				SHOP_CODE,
+				POINTS_NUM,
+				WWLSH,
+				BATCH_ID,
+				ORGCODE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_EXCHANGE_TBL'
+		                   and dic.table_column = 'ORGCODE')
+		           and bianma = ORGCODE) ORGCODE_DESC,
+				CARD_NBR,
+				SURNAME,
+				LAST_NM,
+				FIRST_NM,
+				USER_ID,
+				CUSTR_TYPE,
+				CUSTR_NBR,
+				POINTS_SIGN,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_EXCHANGE_TBL'
+		                   and dic.table_column = 'POINTS_SIGN')
+		           and bianma = POINTS_SIGN) POINTS_SIGN_DESC,
+				POINTS,
+				EXCHANGE_PRE,
+				EXCHANGE_COM,
+				EXCHANGE,
+				LAST_DATE,
+				STATUS,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_EXCHANGE_TBL'
+		                   and dic.table_column = 'STATUS')
+		           and bianma = STATUS) STATUS_DESC,
+				MOBILE,
+				INPUT_MTH,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_EXCHANGE_TBL'
+		                   and dic.table_column = 'INPUT_MTH')
+		           and bianma = INPUT_MTH) INPUT_MTH_DESC,
+				GYH,
+				YWQD,
+				MISC_TX,
+				XYM,
+				XYXX,
+		ID
+		from 
+			<include refid="tableName"></include> a,(select * from jt_organ start with organ_id= #{user.organId} connect by prior organ_id = parent_id) b
+			where a.oper_org = b.organ_id
+		
+		
+	</select>
+	
+	<select id="isExists" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) from 
+		<include refid="tableName"></include> 
+		where ID = #{ID}
+	</select>
+	
+	<select id="listById" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				TRANS_DATE,
+				YWLX,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_EXCHANGE_TBL'
+		                   and dic.table_column = 'YWLX')
+		           and bianma = YWLX) YWLX_DESC,
+				POINTS_NO,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_EXCHANGE_TBL'
+		                   and dic.table_column = 'POINTS_NO')
+		           and bianma = POINTS_NO) POINTS_NO_DESC,
+				POINTS_TYPE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_EXCHANGE_TBL'
+		                   and dic.table_column = 'POINTS_TYPE')
+		           and bianma = POINTS_TYPE) POINTS_TYPE_DESC,
+				SHOP_CODE,
+				POINTS_NUM,
+				WWLSH,
+				BATCH_ID,
+				ORGCODE,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_EXCHANGE_TBL'
+		                   and dic.table_column = 'ORGCODE')
+		           and bianma = ORGCODE) ORGCODE_DESC,
+				CARD_NBR,
+				SURNAME,
+				LAST_NM,
+				FIRST_NM,
+				USER_ID,
+				CUSTR_TYPE,
+				CUSTR_NBR,
+				POINTS_SIGN,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_EXCHANGE_TBL'
+		                   and dic.table_column = 'POINTS_SIGN')
+		           and bianma = POINTS_SIGN) POINTS_SIGN_DESC,
+				POINTS,
+				EXCHANGE_PRE,
+				EXCHANGE_COM,
+				EXCHANGE,
+				LAST_DATE,
+				STATUS,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_EXCHANGE_TBL'
+		                   and dic.table_column = 'STATUS')
+		           and bianma = STATUS) STATUS_DESC,
+				MOBILE,
+				INPUT_MTH,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_DATA_EXCHANGE_TBL'
+		                   and dic.table_column = 'INPUT_MTH')
+		           and bianma = INPUT_MTH) INPUT_MTH_DESC,
+				GYH,
+				YWQD,
+				MISC_TX,
+				XYM,
+				XYXX,
+		ID
+		from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</select>
+	
+	<insert id="save" parameterType="java.util.Map">
+		insert into 
+		<include refid="tableName"></include>
+		(
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update 
+		<include refid="tableName"></include>
+		set 
+		TRANS_DATE = #{TRANS_DATE},
+		YWLX = #{YWLX},
+		POINTS_NO = #{POINTS_NO},
+		POINTS_TYPE = #{POINTS_TYPE},
+		SHOP_CODE = #{SHOP_CODE},
+		POINTS_NUM = #{POINTS_NUM},
+		WWLSH = #{WWLSH},
+		BATCH_ID = #{BATCH_ID},
+		ORGCODE = #{ORGCODE},
+		CARD_NBR = #{CARD_NBR},
+		SURNAME = #{SURNAME},
+		LAST_NM = #{LAST_NM},
+		FIRST_NM = #{FIRST_NM},
+		USER_ID = #{USER_ID},
+		CUSTR_TYPE = #{CUSTR_TYPE},
+		CUSTR_NBR = #{CUSTR_NBR},
+		POINTS_SIGN = #{POINTS_SIGN},
+		POINTS = #{POINTS},
+		EXCHANGE_PRE = #{EXCHANGE_PRE},
+		EXCHANGE_COM = #{EXCHANGE_COM},
+		EXCHANGE = #{EXCHANGE},
+		LAST_DATE = #{LAST_DATE},
+		STATUS = #{STATUS},
+		MOBILE = #{MOBILE},
+		INPUT_MTH = #{INPUT_MTH},
+		GYH = #{GYH},
+		YWQD = #{YWQD},
+		MISC_TX = #{MISC_TX},
+		XYM = #{XYM},
+		XYXX = #{XYXX},
+		ID = ID
+		where ID = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		delete from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</delete>
+    
+</mapper>

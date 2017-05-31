@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head>
+<dif th:include="system/index/top::tophead"></dif>
+</head>
+<body class="no-skin">
+	<!-- /section:basics/navbar.layout -->
+	<div class="main-container" id="main-container">
+		<!-- /section:basics/sidebar -->
+		<div class="main-content">
+			<div class="main-content-inner">
+				<div class="page-content">
+					<div class="page-header">
+							<h1>
+								<small>
+									<i class="ace-icon fa fa-angle-double-right"></i>
+									编辑
+								</small>
+							</h1>
+					</div><!-- /.page-header -->
+					<div class="row">
+						<div class="col-xs-8 col-xs-offset-2">
+
+							<form th:action="@{'/infoquery/datacondition'+${action}}" name="Form" id="Form"
+								method="post">
+								<input type="hidden" name="ID" id="ID" th:value="${datacondition == null ? '' : datacondition.ID}" />
+								<div id="zhongxin" style="padding-top: 13px;">
+									<table id="table_report"
+										class="table table-striped table-bordered table-hover">
+										
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">商城编码:</td>
+											<td><input type="text" name="SHOP_CODE" id="SHOP_CODE"
+												th:value="${datacondition == null ? '' : datacondition.SHOP_CODE}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">条件编码:</td>
+											<td>
+											<select
+												class="chosen-select form-control" name="CONDITION_CODE"
+												id="CONDITION_CODE" data-placeholder="条件编码"
+												style="vertical-align: top;">
+													<option value=""></option>
+													<option th:each="item,status : ${conditioncodeList}" th:selected="${item.BIANMA == (datacondition == null ? '' : datacondition.CONDITION_CODE)}" th:value="${item.BIANMA}" th:inline="text">[[${item.NAME}]]</option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">条件:</td>
+											<td><input type="text" name="CONDITION" id="CONDITION"
+												th:value="${datacondition == null ? '' : datacondition.CONDITION}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">条件日期:</td>
+											<td><input type="text" name="CONDITION_YMD" id="CONDITION_YMD"
+												th:value="${datacondition == null ? '' : datacondition.CONDITION_YMD}" style="width: 98%;" /></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; padding-top: 13px;">条件值:</td>
+											<td><input type="text" name="CONDITION_VAL" id="CONDITION_VAL"
+												th:value="${datacondition == null ? '' : datacondition.CONDITION_VAL}" style="width: 98%;" /></td>
+										</tr>
+									</table>
+								</div>
+								<div id="zhongxin2" class="center" style="display: none">
+									<br />
+									<br />
+									<br />
+									<br />
+									<br />
+									<img th:src="@{/images/jiazai.gif}" /><br />
+									<h4 class="lighter block green">提交中...</h4>
+								</div>
+							</form>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.page-content -->
+			</div>
+		</div>
+		<!-- /.main-content -->
+	</div>
+	<!-- /.main-container -->
+
+	<footer>
+		<div style="width: 100%; padding-bottom: 2px;" class="center">
+			<a class="btn btn-mini btn-primary" onclick="save();">保存</a> <a
+				class="btn btn-mini btn-danger" onclick="cancel();">取消</a>
+		</div>
+	</footer>
+
+	<!-- 页面底部js¨ -->
+	<div th:include="system/index/foot::footdiv" />
+	<!--提示框-->
+	<script type="text/javascript" th:src="@{/js/jquery.tips.js}"></script>
+	<script type="text/javascript" th:inline="javascript">
+		$(top.hangge());
+		var action = [[${action}]];		
+		
+		function cancel(){
+			/*<![CDATA[*/
+			top.jzts();
+			if(true && document.forms[0]){
+				var url = /*[[${url}]]*/;
+				document.forms[0].action = url;
+				document.forms[0].submit();
+			}
+			/*]]>*/		
+		}
+		
+		//保存
+		function save() {
+			if ($("#SHOP_CODE").val() == "") {
+				$("#SHOP_CODE").tips({
+					side : 3,
+					msg : '请输入商城编码',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#SHOP_CODE").focus();
+				return false;
+			}
+			if ($("#CONDITION").val() == "") {
+				$("#CONDITION").tips({
+					side : 3,
+					msg : '请输入条件',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#CONDITION").focus();
+				return false;
+			}
+			if ($("#CONDITION_YMD").val() == "") {
+				$("#CONDITION_YMD").tips({
+					side : 3,
+					msg : '请输入条件日期',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#CONDITION_YMD").focus();
+				return false;
+			}
+			if ($("#CONDITION_VAL").val() == "") {
+				$("#CONDITION_VAL").tips({
+					side : 3,
+					msg : '请输入条件值',
+					bg : '#AE81FF',
+					time : 2
+				});
+				$("#CONDITION_VAL").focus();
+				return false;
+			}
+			$.post(/*[[@{'/infoquery/datacondition'+${action}}]]*/,$("#Form").serializeJSON(),function(data){
+				if(data == 'SUCCESS'){
+					cancel();
+				}else{
+					alert(data);
+				}
+			});
+		}
+	</script>
+</body>
+</html>

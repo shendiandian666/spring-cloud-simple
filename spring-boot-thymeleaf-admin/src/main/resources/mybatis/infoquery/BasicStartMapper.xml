@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyx.mapper.infoquery.BasicStartMapper">
+
+	<!--表名 -->
+	<sql id="tableName">
+		"BON_BASIC_START_TBL"
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		SHOP_CODE,
+		POINTS_ID,
+		RATE,
+		STATUS,
+		OPER_ORG,
+		OPER_ID,
+		OPER_DATE,
+		ID
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{SHOP_CODE},
+		#{POINTS_ID},
+		#{RATE},
+		#{STATUS},
+		#{user.organId},
+		#{user.userName},
+		sysdate,
+		to_char(sysdate,'yyyyMMdd')||POINTS_BASIC_SEQ.NEXTVAL		
+	</sql>
+	
+	<select id="list" parameterType="java.util.Map" resultType="java.util.Map">
+		select b.SHOP_CODE,
+			   b.POINTS_CODE,
+		       b.POINTS_NAME,
+		       a.RATE,
+		       a.STATUS,
+		       (select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_START_TBL'
+		                   and dic.table_column = 'STATUS')
+		           and bianma = a.STATUS) STATUS_DESC,
+		       b.type,
+		       (select name
+		          from jt_dictionaries
+		         where parent_id in (select dic_id
+		                               from jt_column_dic dic
+		                              where dic.table_name = 'BON_BASIC_POINTS_TBL'
+		                                and dic.table_column = 'TYPE')
+		           and bianma = b.type) TYPE_DESC,
+		       b.ID
+		  from bon_basic_start_tbl a, bon_basic_points_tbl b,(select * from jt_organ start with organ_id= #{user.organId} connect by prior organ_id = parent_id) c
+		 where b.OPER_ORG = c.organ_id and a.points_id(+) = b.id
+		 <if test="keywords!= null and keywords != ''">
+			and
+				(
+					 b.SHOP_CODE LIKE CONCAT(CONCAT('%', #{keywords}),'%')
+					 or 
+					 b.POINTS_CODE LIKE CONCAT(CONCAT('%', #{keywords}),'%') 
+					 or 
+					 b.POINTS_NAME LIKE CONCAT(CONCAT('%', #{keywords}),'%') 
+				)
+		</if>
+		order by b.id
+	</select>
+	
+	<select id="isExists" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) from 
+		<include refid="tableName"></include> 
+		where POINTS_ID = #{ID}
+	</select>
+	
+	<select id="listById" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+				SHOP_CODE,
+				POINTS_ID,
+				RATE,
+				STATUS,
+				(select name
+		          from jt_dictionaries
+		         where parent_id in
+		               (select dic_id
+		                  from jt_column_dic dic
+		                 where dic.table_name = 'BON_BASIC_START_TBL'
+		                   and dic.table_column = 'STATUS')
+		           and bianma = STATUS) STATUS_DESC,
+		ID
+		from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</select>
+	
+	<insert id="save" parameterType="java.util.Map">
+		insert into 
+		<include refid="tableName"></include>
+		(
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update 
+		<include refid="tableName"></include>
+		set 
+		<if test="RATE != null and RATE != ''">
+			RATE = #{RATE},
+		</if>
+		STATUS = #{STATUS}
+		where POINTS_ID = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		delete from 
+		<include refid="tableName"></include>
+		where ID = #{ID}
+	</delete>
+    
+</mapper>
